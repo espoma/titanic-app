@@ -17,7 +17,7 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.impute import SimpleImputer
+from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 import warnings
 
@@ -30,8 +30,6 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
     Only the 'basic' method is implemented. Other methods are deliberately
     unsupported here so you can add them later.
     """
-
-    DEFAULT_DROP = ['PassengerId', 'Ticket', 'Cabin', 'Embarked']
 
     def __init__(
         self,
@@ -51,20 +49,32 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
         self.ordinal_features = ordinal_features or ['Pclass']
         self.categorical_features = categorical_features or ['Sex']
 
-        # columns we will remove before preprocessing
-        self.columns_to_drop = [c for c in self.DEFAULT_DROP]
-        if not self.keep_name:
-            # user asked not to keep the Name column -> drop it
-            self.columns_to_drop.append('Name')
-
         self.pipeline = None
         self.feature_names_out_ = None
 
     def _build_pipeline(self):
-        # Numeric: mean imputation
-        numeric_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='mean')),
-        ])
+        
+        if self.method == 'basic':
+
+            # Numeric: mean imputation
+            numeric_transformer = Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy='mean')),
+            ])
+
+        elif (self.method == 'median_impute'):
+
+            # Numeric: mean imputation
+            numeric_transformer = Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy='median')),
+            ])
+
+        elif (self.method == 'knn_impute'):
+
+            # Numeric: mean imputation
+            numeric_transformer = Pipeline(steps=[
+                ('imputer', KNNImputer(n_neighbors=5)),
+            ])
+
 
         # Ordinal: most frequent (mode) imputation, then OrdinalEncoder
         ordinal_transformer = Pipeline(steps=[
@@ -97,9 +107,6 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
         """
         Xc = X.copy()
 
-        # Drop unneeded columns if present
-        Xc = Xc.drop(columns=[c for c in self.columns_to_drop if c in Xc.columns])
-
         # Build and fit pipeline
         self.pipeline = self._build_pipeline()
         self.pipeline.fit(Xc)
@@ -118,7 +125,6 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
             raise ValueError('Preprocessor not fitted. Call fit() first.')
 
         Xc = X.copy()
-        Xc = Xc.drop(columns=[c for c in self.columns_to_drop if c in Xc.columns])
 
         arr = self.pipeline.transform(Xc)
 
@@ -160,5 +166,4 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
             'numeric_features': self.numeric_features,
             'ordinal_features': self.ordinal_features,
             'categorical_features': self.categorical_features,
-            'columns_to_drop': self.columns_to_drop,
         }
