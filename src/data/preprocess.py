@@ -21,7 +21,7 @@ from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 import warnings
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 
 class TitanicPreprocessor(BaseEstimator, TransformerMixin):
@@ -33,7 +33,7 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        method='basic',
+        method="basic",
         keep_name=False,
         numeric_features=None,
         ordinal_features=None,
@@ -41,62 +41,83 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
     ):
         # Accept 'keep_name' for backwards compatibility with existing scripts
         self.method = method
-        if self.method != 'basic':
-            raise ValueError("This implementation supports only method='basic'.")
+
+        # validate method early so callers get a clear error
+        allowed = {"basic", "median_impute", "knn_impute"}
+        if self.method not in allowed:
+            raise ValueError(
+                f"Unsupported method '{self.method}'. Supported: {sorted(allowed)}"
+            )
 
         self.keep_name = keep_name
-        self.numeric_features = numeric_features or ['Age', 'SibSp', 'Parch', 'Fare']
-        self.ordinal_features = ordinal_features or ['Pclass']
-        self.categorical_features = categorical_features or ['Sex']
+        self.numeric_features = numeric_features or ["Age", "Fare"]
+        self.ordinal_features = ordinal_features or ["Pclass", "Parch", "SibSp"]
+        self.categorical_features = categorical_features or ["Sex"]
 
         self.pipeline = None
         self.feature_names_out_ = None
 
     def _build_pipeline(self):
-        
-        if self.method == 'basic':
+
+        if self.method == "basic":
 
             # Numeric: mean imputation
-            numeric_transformer = Pipeline(steps=[
-                ('imputer', SimpleImputer(strategy='mean')),
-            ])
+            numeric_transformer = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="mean")),
+                ]
+            )
 
-        elif (self.method == 'median_impute'):
-
-            # Numeric: mean imputation
-            numeric_transformer = Pipeline(steps=[
-                ('imputer', SimpleImputer(strategy='median')),
-            ])
-
-        elif (self.method == 'knn_impute'):
+        elif self.method == "median_impute":
 
             # Numeric: mean imputation
-            numeric_transformer = Pipeline(steps=[
-                ('imputer', KNNImputer(n_neighbors=5)),
-            ])
+            numeric_transformer = Pipeline(
+                steps=[
+                    ("imputer", SimpleImputer(strategy="median")),
+                ]
+            )
 
+        elif self.method == "knn_impute":
+
+            # Numeric: mean imputation
+            numeric_transformer = Pipeline(
+                steps=[
+                    ("imputer", KNNImputer(n_neighbors=5)),
+                ]
+            )
 
         # Ordinal: most frequent (mode) imputation, then OrdinalEncoder
-        ordinal_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='most_frequent')),
-            ('ordinal', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)),
-        ])
+        ordinal_transformer = Pipeline(
+            steps=[
+                ("imputer", SimpleImputer(strategy="most_frequent")),
+                (
+                    "ordinal",
+                    OrdinalEncoder(
+                        handle_unknown="use_encoded_value", unknown_value=-1
+                    ),
+                ),
+            ]
+        )
 
         # Categorical: most frequent imputation, then one-hot encode
-        categorical_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='most_frequent')),
-            ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore')),
-        ])
+        categorical_transformer = Pipeline(
+            steps=[
+                ("imputer", SimpleImputer(strategy="most_frequent")),
+                ("onehot", OneHotEncoder(sparse_output=False, handle_unknown="ignore")),
+            ]
+        )
 
         transformers = []
         if self.numeric_features:
-            transformers.append(('num', numeric_transformer, self.numeric_features))
+            transformers.append(("num", numeric_transformer, self.numeric_features))
         if self.ordinal_features:
-            transformers.append(('ord', ordinal_transformer, self.ordinal_features))
+            transformers.append(("ord", ordinal_transformer, self.ordinal_features))
         if self.categorical_features:
-            transformers.append(('cat', categorical_transformer, self.categorical_features))
+            transformers.append(
+                ("cat", categorical_transformer, self.categorical_features)
+            )
 
-        preprocessor = ColumnTransformer(transformers=transformers, remainder='drop')
+        preprocessor = ColumnTransformer(transformers=transformers, remainder="drop")
         return preprocessor
 
     def fit(self, X: pd.DataFrame, y=None):
@@ -122,7 +143,7 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
             ValueError: if fit() was not called first.
         """
         if self.pipeline is None:
-            raise ValueError('Preprocessor not fitted. Call fit() first.')
+            raise ValueError("Preprocessor not fitted. Call fit() first.")
 
         Xc = X.copy()
 
@@ -148,7 +169,7 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
 
         # categorical one-hot names
         if self.categorical_features:
-            onehot = self.pipeline.named_transformers_['cat'].named_steps['onehot']
+            onehot = self.pipeline.named_transformers_["cat"].named_steps["onehot"]
             cat_names = list(onehot.get_feature_names_out(self.categorical_features))
             feature_names.extend(cat_names)
 
@@ -156,14 +177,36 @@ class TitanicPreprocessor(BaseEstimator, TransformerMixin):
 
     def get_feature_names_out(self):
         if self.feature_names_out_ is None:
-            raise ValueError('Preprocessor not fitted. Call fit() first.')
+            raise ValueError("Preprocessor not fitted. Call fit() first.")
         return self.feature_names_out_
+
+    def get_name(self):
+        """Generate a descriptive name for this preprocessor configuration."""
+        parts = [self.method]
+        
+        # Add feature grouping info
+        if self.ordinal_features:
+            parts.append(f"ord{len(self.ordinal_features)}")
+        else:
+            parts.append("noord")
+        
+        if self.numeric_features:
+            parts.append(f"num{len(self.numeric_features)}")
+        
+        # Add feature engineering flag if needed (you'll add this later)
+        if hasattr(self, 'with_engineered_features') and self.with_engineered_features:
+            parts.append("fe")
+        
+        return "_".join(parts)
+    
+    def __str__(self):
+        return f"TitanicPreprocessor({self.get_name()})"
 
     def get_config(self):
         return {
-            'method': 'basic',
-            'keep_name': self.keep_name,
-            'numeric_features': self.numeric_features,
-            'ordinal_features': self.ordinal_features,
-            'categorical_features': self.categorical_features,
+            "method": self.method,
+            "keep_name": self.keep_name,
+            "numeric_features": self.numeric_features,
+            "ordinal_features": self.ordinal_features,
+            "categorical_features": self.categorical_features,
         }
