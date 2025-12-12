@@ -30,6 +30,10 @@ This project walks through that full journey—from raw data to a deployable pre
 - **Data & ML**: pandas, scikit-learn, numpy, scipy
 - **Exploration**: Jupyter, seaborn, matplotlib
 - **Experiment Tracking**: MLflow (local file backend)
+- **Optimization**: Optuna
 - **Serialization**: joblib
 - **Deployment**: Streamlit (app) + Streamlit Cloud (hosting)
+
+
+
 
