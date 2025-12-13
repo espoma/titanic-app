@@ -10,6 +10,7 @@ RAW_TRAIN_PATH = os.path.join(RAW_DIR, "train.csv")
 RAW_TEST_PATH = os.path.join(RAW_DIR, "test.csv")
 
 MODELS_DIR = os.path.join(PROJECT_ROOT, "results", "models")
+SUBMISSION_DIR = os.path.join(PROJECT_ROOT, "results", "submissions")
 
 MLFLOW_TRACKING_URI = os.path.join(PROJECT_ROOT, "results", "mlflow")
 
