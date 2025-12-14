@@ -1,6 +1,6 @@
 # Titanic Survival Prediction — POC
 
-A playful proof-of-concept ML project: explore the Titanic dataset, build a flexible preprocessing pipeline, run experiments with MLflow, and eventually deploy a Streamlit app to predict survival chances.
+A playful proof-of-concept ML project: explore the Titanic dataset, build a flexible preprocessing pipeline, run experiments with MLflow using various ML approaches, fine tune the most promising models with Optuna, and eventually deploy a Streamlit app to predict survival chances.
 
 ## The Idea
 
@@ -15,14 +15,19 @@ This project walks through that full journey—from raw data to a deployable pre
 
 2. **Flexible Preprocessing** (`src/data/preprocess.py`)  
    A scikit-learn compatible `TitanicPreprocessor` class supporting multiple strategies:
-   - `basic`: drop unnecessary columns, mean imputation for numeric, mode for categorical, one-hot encode.
-   - (Planned) `median`, `knn`, `drop`: alternative imputation and feature handling strategies.
+   - `basic`: mean imputation for numeric, mode for ordinal, one-hot encode for categorical.
+   - `median`: median imputation for numeric, mode for ordinal, one-hot encode for categorical.
+   - `knn`: knn imputation for numeric, mode for ordinal, one-hot encode for categorical.
+   All the above methods drop columns that the exploratory data analysis has shown to be uninformative.
    - Deterministic and reusable via `joblib` serialization.
 
 3. **Experiment Tracking** (`src/models/train.py`)  
    Baseline trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
 
-4. **Streamlit App** (upcoming)  
+4. **Model Fine-Tuning** (`src/models/optuna.py`)  
+   Optuna trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
+
+5. **Streamlit App** (`src/app/app.py`)  
    A lightweight UI where users input passenger info (age, class, sex, etc.) and get a survival prediction from the best model.
 
 ## Tech Stack
