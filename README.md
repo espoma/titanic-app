@@ -21,10 +21,10 @@ This project walks through that full journey—from raw data to a deployable pre
    All the above methods drop columns that the exploratory data analysis has shown to be uninformative.
    - Deterministic and reusable via `joblib` serialization.
 
-3. **Experiment Tracking** (`src/models/train.py`)  
+3. **Experiment Tracking** (`src/models/mlflow/train*.py`)  
    Baseline trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
 
-4. **Model Fine-Tuning** (`src/models/optuna.py`)  
+4. **Model Fine-Tuning** (`src/models/tuning/tune*.py`)  
    Optuna trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
 
 5. **Streamlit App** (`src/app/app.py`)  
