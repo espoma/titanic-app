@@ -10,8 +10,7 @@ from sklearn.pipeline import Pipeline
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
-from data.load_data import load_train_data, load_test_data
-from data.preprocess import TitanicPreprocessor
+from data import load_train_data, TitanicPreprocessor
 
 warnings.filterwarnings("ignore")
 

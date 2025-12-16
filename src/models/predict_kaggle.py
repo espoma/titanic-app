@@ -4,7 +4,7 @@ import sys
 import joblib
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from config import MODELS_DIR, SUBMISSION_DIR
-from data.load_data import load_test_data
+from data import load_test_data
 
 best_model_name = "best_extratrees_pipeline.joblib"
 
