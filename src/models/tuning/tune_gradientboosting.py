@@ -3,13 +3,14 @@ import pandas as pd
 import os
 import sys
 import warnings
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
-from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.pipeline import Pipeline
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
-from data import load_train_data, TitanicPreprocessor
+from data.load_data import load_train_data, load_test_data
+from data.preprocess import TitanicPreprocessor
 
 warnings.filterwarnings("ignore")
 
@@ -27,21 +28,22 @@ cv_strategy = StratifiedKFold(n_splits=CV_FOLDS, shuffle=True, random_state=42)
 def objective(trial, X, y):
     # Suggest hyperparameters for the classifier
     n_estimators = trial.suggest_int("n_estimators", 100, 1000)
-    max_depth = trial.suggest_int("max_depth", 10, 50)
+    max_depth = trial.suggest_int("max_depth", 3, 10)  # GradientBoosting typically uses shallower trees
     min_samples_split = trial.suggest_int("min_samples_split", 2, 20)
-    # min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 20)
+    learning_rate = trial.suggest_float("learning_rate", 0.01, 0.3, log=True)
+    subsample = trial.suggest_float("subsample", 0.6, 1.0)
     
     # Suggest hyperparameters for preprocessing
     method = trial.suggest_categorical("method", ["basic", "median_impute", "knn_impute"])
 
     # Define the classifier
-    clf = ExtraTreesClassifier(
+    clf = GradientBoostingClassifier(
         n_estimators=n_estimators,
         max_depth=max_depth,
         min_samples_split=min_samples_split,
-        # min_samples_leaf=min_samples_leaf,
+        learning_rate=learning_rate,
+        subsample=subsample,
         random_state=42,
-        n_jobs=4,
     )
 
     # Feature strategy selection
@@ -96,12 +98,13 @@ else:
     best_ordinal = ["Pclass", "Parch", "SibSp"]
 
 # Reconstruct the best pipeline
-best_clf = ExtraTreesClassifier(
+best_clf = GradientBoostingClassifier(
     n_estimators=best_params["n_estimators"],
     max_depth=best_params["max_depth"],
     min_samples_split=best_params["min_samples_split"],
+    learning_rate=best_params["learning_rate"],
+    subsample=best_params["subsample"],
     random_state=42,
-    n_jobs=-1
 )
 
 best_preprocessor = TitanicPreprocessor(
@@ -132,12 +135,12 @@ from config import MODELS_DIR
 os.makedirs(MODELS_DIR, exist_ok=True)
 
 # Save pipeline
-model_path = os.path.join(MODELS_DIR, "best_extratrees_pipeline.joblib")
+model_path = os.path.join(MODELS_DIR, "best_gradientboosting_pipeline.joblib")
 joblib.dump(final_pipeline, model_path)
 print(f"\nSaved best model to: {model_path}")
 
 # Save parameters
-params_path = os.path.join(MODELS_DIR, "best_extratrees_params.json")
+params_path = os.path.join(MODELS_DIR, "best_gradientboosting_params.json")
 with open(params_path, "w") as f:
     json.dump(best_params, f, indent=4)
 print(f"Saved best parameters to: {params_path}")
