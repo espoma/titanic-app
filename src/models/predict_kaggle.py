@@ -3,13 +3,13 @@ import pandas as pd
 import sys
 import joblib
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from config import MODELS_DIR, SUBMISSION_DIR
+from config import BEST_MODELS_DIR, SUBMISSION_DIR
 from data import load_test_data
 
 model = "rf_knn_fe_embarked"
 best_model_name = f"best_{model}_pipeline.joblib"
 
-best_model = joblib.load(os.path.join(MODELS_DIR, best_model_name))
+best_model = joblib.load(os.path.join(BEST_MODELS_DIR, best_model_name))
 
 test_raw = load_test_data()
 

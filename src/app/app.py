@@ -5,7 +5,7 @@ import joblib
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from config import MODELS_DIR
+from config import BEST_MODELS_DIR
 
 st.set_page_config(page_title="Titanic Survival Predictor", page_icon="🚢", layout="centered")
 
@@ -50,7 +50,7 @@ st.title("🚢 Would you have survived the Titanic?")
 
 st.subheader("What's your sitch?")
 
-Model = st.selectbox("Model", [model for model in os.listdir(MODELS_DIR) if model.endswith(".joblib") and "pipeline" in model])
+Model = st.selectbox("Model", [model for model in os.listdir(BEST_MODELS_DIR) if model.endswith(".joblib") and "pipeline" in model])
 
 col1, col2 = st.columns(2)
 
@@ -64,7 +64,7 @@ with col2:
     ParCh = st.number_input("Parents/Children", min_value=0, max_value=10, value=0)
     Sex = st.selectbox("Sex", ["Male", "Female"])
 
-best_model = joblib.load(os.path.join(MODELS_DIR, Model))
+best_model = joblib.load(os.path.join(BEST_MODELS_DIR, Model))
 
 input_data = pd.DataFrame({
     "Age": [Age],
