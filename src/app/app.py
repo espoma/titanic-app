@@ -4,7 +4,7 @@ import os
 import joblib
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))
 from config import BEST_MODELS_DIR
 
 st.set_page_config(page_title="Titanic Survival Predictor", page_icon="🚢", layout="centered")
