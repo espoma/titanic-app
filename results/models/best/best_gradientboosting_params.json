@@ -1,0 +1,9 @@
+{
+    "n_estimators": 132,
+    "max_depth": 7,
+    "min_samples_split": 11,
+    "learning_rate": 0.03406862616562402,
+    "subsample": 0.8713920189178204,
+    "method": "median_impute",
+    "feature_strategy": "numeric_only"
+}
