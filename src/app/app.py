@@ -50,21 +50,23 @@ st.title("🚢 Would you have survived the Titanic?")
 
 st.subheader("What's your sitch?")
 
-Model = st.selectbox("Model", [model for model in os.listdir(BEST_MODELS_DIR) if model.endswith(".joblib") and "pipeline" in model])
+# Model = st.selectbox("Model", [model.split(".")[0] for model in os.listdir(BEST_MODELS_DIR) if model.endswith(".joblib") and "pipeline" in model])
 
+Model = "best_gradientboosting_pipeline"
 col1, col2 = st.columns(2)
 
 with col1:
     Age = st.number_input("Age", min_value=0, max_value=120, value=30)
     Pclass = st.number_input("Class", min_value=1, max_value=3, value=1)
     SibSp = st.number_input("Siblings/Spouses", min_value=0, max_value=10, value=0)
+    # Embarked = st.selectbox("Embarked", ["S", "C", "Q"])
 
 with col2:
     Fare = st.number_input("Fare", min_value=0, max_value=500, value=30)
     ParCh = st.number_input("Parents/Children", min_value=0, max_value=10, value=0)
     Sex = st.selectbox("Sex", ["Male", "Female"])
 
-best_model = joblib.load(os.path.join(BEST_MODELS_DIR, Model))
+best_model = joblib.load(os.path.join(BEST_MODELS_DIR, Model + ".joblib"))
 
 input_data = pd.DataFrame({
     "Age": [Age],
