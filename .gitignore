@@ -95,8 +95,9 @@ Thumbs.db
 htmlcov/
 
 # Results and models (keep the directory but ignore contents)
-results/models/
-!results/models/best
+results/models/*
+!results/models/best/
 
+# MLflow
 results/mlflow/
 TODO.md
