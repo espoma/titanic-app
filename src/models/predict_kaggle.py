@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from config import MODELS_DIR, SUBMISSION_DIR
 from data import load_test_data
 
-model = "gradientboosting"
+model = "rf_knn_fe_embarked"
 best_model_name = f"best_{model}_pipeline.joblib"
 
 best_model = joblib.load(os.path.join(MODELS_DIR, best_model_name))
