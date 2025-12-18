@@ -1,0 +1,7 @@
+{
+    "n_estimators": 160,
+    "max_depth": 39,
+    "min_samples_split": 7,
+    "method": "basic",
+    "feature_strategy": "with_ordinals"
+}
