@@ -100,4 +100,7 @@ results/models/*
 
 # MLflow
 results/mlflow/
+
+# Various
 TODO.md
+notebooks/various.ipynb
