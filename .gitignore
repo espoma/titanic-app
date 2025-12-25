@@ -48,7 +48,7 @@ MANIFEST
 # MLflow
 mlruns/
 .mlflow/
-/src/models/mlflow/*
+# /src/models/mlflow/*  <-- Removed to allow tracking source code
 
 # W&B
 wandb/
@@ -102,5 +102,5 @@ results/models/*
 results/mlflow/
 
 # Various
-TODO.md
+# TODO.md
 notebooks/various.ipynb
