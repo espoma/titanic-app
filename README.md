@@ -1,6 +1,6 @@
 # Titanic Survival Prediction — POC
 
-A playful proof-of-concept ML project: explore the Titanic dataset, build a flexible preprocessing pipeline, run experiments with MLflow using various ML approaches, fine tune the most promising models with Optuna, and eventually deploy a Streamlit app to predict survival chances.
+A playful proof-of-concept ML project: explore the Titanic dataset, build a flexible preprocessing pipeline, run experiments with MLflow, and eventually deploy a Streamlit app to predict survival chances.
 
 ## The Idea
 
@@ -15,30 +15,26 @@ This project walks through that full journey—from raw data to a deployable pre
 
 2. **Flexible Preprocessing** (`src/data/preprocess.py`)  
    A scikit-learn compatible `TitanicPreprocessor` class supporting multiple strategies:
-   - `basic`: mean imputation for numeric, mode for ordinal, one-hot encode for categorical.
-   - `median`: median imputation for numeric, mode for ordinal, one-hot encode for categorical.
-   - `knn`: knn imputation for numeric, mode for ordinal, one-hot encode for categorical.
-   All the above methods drop columns that the exploratory data analysis has shown to be uninformative.
+   - `basic`: drop unnecessary columns, mean imputation for numeric, mode for categorical, one-hot encode.
+   - (Planned) `median`, `knn`, `drop`: alternative imputation and feature handling strategies.
    - Deterministic and reusable via `joblib` serialization.
 
 3. **Experiment Tracking** (`src/models/mlflow/train*.py`)  
-   Baseline trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
+   Baseline trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. All experiments are recorded and hosted on **[DagsHub](https://dagshub.com/espoma/titanic-app)**.
+   - **MLflow Tracking Dashboard**: [View Experiments on DagsHub](https://dagshub.com/espoma/titanic-app.mlflow)
 
 4. **Model Fine-Tuning** (`src/models/tuning/tune*.py`)  
-   Optuna trainer using MLflow to log cross-validation metrics, model artifacts, and parameters. Compare different preprocessing strategies and models side-by-side.
+   Optuna-driven hyperparameter optimization. The best pipelines are saved as artifacts and can be compared via the DagsHub MLflow UI.
 
 5. **Streamlit App** (`src/app/app.py`)  
    A lightweight UI where users input passenger info (age, class, sex, etc.) and get a survival prediction from the best model.
+   - **Live Demo**: [titanic-app-espoma.streamlit.app](https://titanic-app-espoma.streamlit.app)
 
 ## Tech Stack
 
 - **Data & ML**: pandas, scikit-learn, numpy, scipy
 - **Exploration**: Jupyter, seaborn, matplotlib
-- **Experiment Tracking**: MLflow (local file backend)
+- **Experiment Tracking**: MLflow + **DagsHub** (Remote Tracking Server)
 - **Optimization**: Optuna
 - **Serialization**: joblib
 - **Deployment**: Streamlit (app) + Streamlit Cloud (hosting)
-
-
-
-
