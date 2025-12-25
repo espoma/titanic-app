@@ -5,6 +5,7 @@ import joblib
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import accuracy_score
+import subprocess
 
 
 def get_or_create_experiment(experiment_name, tracking_uri):
@@ -120,6 +121,12 @@ def run_experiment(
     # Start MLflow run
     print("\n4. Logging to MLflow...")
     with mlflow.start_run(run_name=run_name):
+        # Link to Git Commit for DagsHub
+        try:
+            commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
+            mlflow.set_tag("mlflow.source.git.commit", commit_id)
+        except Exception:
+            pass
 
         # Log parameters
         params = {
