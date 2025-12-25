@@ -30,6 +30,42 @@ This project walks through that full journey—from raw data to a deployable pre
    A lightweight UI where users input passenger info (age, class, sex, etc.) and get a survival prediction from the best model.
    - **Live Demo**: [titanic-app-espoma.streamlit.app](https://titanic-app-espoma.streamlit.app)
 
+## Project Structure
+
+```text
+titanic/
+├── data/                   # Raw and processed data
+│   ├── raw/                # Original train.csv and test.csv from Kaggle
+│   └── processed/          # Data after basic cleaning/transformation
+├── notebooks/              # Jupyter notebooks for exploration
+│   └── eda.ipynb           # Main Exploratory Data Analysis
+├── src/                    # Source code
+│   ├── app/                # Streamlit application
+│   ├── data/               # Data loading and preprocessing logic
+│   ├── features/           # Custom feature engineering transformers
+│   ├── models/             # Training and prediction scripts
+│   │   ├── mlflow/         # MLflow experiment tracking scripts
+│   │   ├── tuning/         # Hyperparameter optimization (Optuna)
+│   │   └── wandb/          # Weights & Biases experiment tracking
+│   └── config.py           # Project-wide configuration and paths
+├── results/                # Local storage for models and metrics
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
+```
+
+## Exploratory Data Analysis
+
+The initial exploration in `notebooks/eda.ipynb` revealed several key insights that guided the modeling strategy:
+
+- **Missing Values**: Significant missing data was found in `Age` (~20%), `Cabin` (>75%), and `Embarked` (2 records). `Cabin` was dropped due to sparsity, while `Age` required robust imputation.
+- **Survival Correlations**:
+    - **Sex**: Females had a significantly higher survival rate (~74%) compared to males (~19%).
+    - **Pclass**: First-class passengers were much more likely to survive than those in third class.
+    - **Age**: Children had higher survival rates, while the elderly were more vulnerable.
+- **Feature Redundancy**: `PassengerId` was identified as non-informative for baseline models and removed.
+- **Feature Drop**: `Ticket` may contain helpful signals related to the position of each passenger, but this information was dropped for simplicity.
+- **Class Balance**: The target variable `Survived` is relatively balanced (~38% survival rate), making Accuracy a viable primary metric, though Precision and Recall are tracked for a deeper understanding of model performance.
+
 ## Tech Stack
 
 - **Data & ML**: pandas, scikit-learn, numpy, scipy
