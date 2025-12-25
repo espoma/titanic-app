@@ -1,0 +1,106 @@
+# Data directories
+data/
+!data/README.md
+!src/data
+!src/data/**
+
+# Virtual environments
+env-titanic/
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# MLflow
+mlruns/
+.mlflow/
+# /src/models/mlflow/*  <-- Removed to allow tracking source code
+
+# W&B
+wandb/
+
+
+# Ignore python caches at any level (explicit double-star patterns)
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+
+# Byte-compiled / optimized / shared objects
+**/*.so
+
+# mypy / pytest caches
+.mypy_cache/
+**/.mypy_cache/
+.pytest_cache/
+**/.pytest_cache/
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Caches and temp
+.cache/
+**/.cache/
+
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+
+# OS
+**/.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Results and models (keep the directory but ignore contents)
+results/models/*
+!results/models/best/
+
+# MLflow
+results/mlflow/
+
+# Various
+# TODO.md
+notebooks/various.ipynb
